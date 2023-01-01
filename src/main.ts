@@ -4,6 +4,7 @@ import { loadCommands } from "./events/modules/Commands";
 
 import { login } from "./events/Login";
 import { messages } from "./events/Message";
+import { Connect } from "./database/postgres";
 
 import { LogLevel, Logger } from "./utility/Logger";
 import { ConfigSchema } from "./validators/ConfigSchema";
@@ -29,6 +30,7 @@ export const client = new Client({
 (async () => {
      login(token);
      messages();
+     Connect();
      const commandsMapped = loadCommands();
      const commands = [...commandsMapped.commands.values()];
 

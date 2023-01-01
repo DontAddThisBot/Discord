@@ -44,9 +44,11 @@ export const handler = async (msg: any): Promise<void> => {
                               setTimeout(() => {
                                    cooldown.delete(cooldownKey);
                               }, 2000);
-                         } else if (response.text) {
+                         } else if (response?.text || response?.embed) {
                               await msg.send(
-                                   response.text.replace(/\n|\r/g, " "),
+                                   response.text
+                                        ? response.text.replace(/\n|\r/g, " ")
+                                        : response.embed,
                                    response.ephemeral
                               );
                          }

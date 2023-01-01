@@ -27,7 +27,14 @@ export const messages = () => {
           if (msg.commandName) {
                const msgHadnler = {
                     data: msg,
-                    send: async (response: string, ephemeral: Boolean) => {
+                    send: async (response: any, ephemeral: Boolean) => {
+                         if (typeof response === "object") {
+                              return await msg.reply({
+                                   embeds: [response],
+                                   ephemeral: ephemeral
+                              });
+                         }
+
                          response = shortenText(response, 1950);
 
                          if (racism.test(response) || slurs.test(response)) {
