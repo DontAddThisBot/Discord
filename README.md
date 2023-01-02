@@ -1,5 +1,7 @@
 # DontAddThisBot-Discord
 
+MAKE SURE TO 'CREATE DATABASE discord_bot;'
+
 ![TO](https://cdn.7tv.app/emote/616e0092ffc7244d797c5aad/4x.webp) ![TO](https://cdn.7tv.app/emote/616e0092ffc7244d797c5aad/4x.webp)
 ![TO](https://cdn.7tv.app/emote/616e0092ffc7244d797c5aad/4x.webp) ![TO](https://cdn.7tv.app/emote/616e0092ffc7244d797c5aad/4x.webp)
 ![TO](https://cdn.7tv.app/emote/616e0092ffc7244d797c5aad/4x.webp) ![TO](https://cdn.7tv.app/emote/616e0092ffc7244d797c5aad/4x.webp)
