@@ -51,7 +51,7 @@ export = {
                const { name, animated, host } = data.emote;
                const addEmote = await createEmote(
                     animated
-                         ? `https://${host.url}/2x.gif`
+                         ? `https://${host.url}/1x.gif`
                          : `https://${host.url}/2x.png`,
                     name,
                     animated
