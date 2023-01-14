@@ -34,7 +34,10 @@ export const GetEmote = async (id?: string): Promise<any> => {
 			name
 			lifecycle
 			tags
-            animated
+               animated
+               owner {
+                    display_name
+               }
 			host {
 				...HostFragment
 			}
@@ -256,4 +259,20 @@ export const GetUserBySevenTVId = async (id?: string): Promise<any> => {
      ).then((res) => res.json());
 
      return User;
+};
+
+export const GetChannelEmotes = async (id: string): Promise<any> => {
+     if (!id) return;
+     try {
+          const result = await fetch(`https://7tv.io/v3/users/twitch/${id}`, {
+               method: "GET",
+               headers: {
+                    "Content-Type": "application/json"
+               }
+          }).then((res) => res.json());
+          if (!result || result?.error) return;
+          return result;
+     } catch (err) {
+          throw new Error("Failed to fetch channel emotes.");
+     }
 };

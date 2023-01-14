@@ -1,12 +1,11 @@
 import { client } from "../main";
 import { handler } from "./modules/Handler";
-import { shortenText } from "../misc/Utils";
 import { Logger, LogLevel } from "../utility/Logger";
-import { racism, slurs } from "../utility/Regex";
 import { client_id } from "../../config.json";
+import { Events } from "discord.js";
 
 export const messages = () => {
-     client.on("interactionCreate", async (msg: any) => {
+     client.on(Events.InteractionCreate, async (msg: any) => {
           const permissions = msg.guild.members.me.permissions;
           const permissionNames = permissions.toArray();
 
@@ -24,43 +23,17 @@ export const messages = () => {
                return;
           }
 
-          if (msg.commandName) {
-               const msgHadnler = {
-                    data: msg,
-                    send: async (response: any, ephemeral: Boolean) => {
-                         if (typeof response === "object") {
-                              return await msg.reply({
-                                   embeds: [response],
-                                   ephemeral: ephemeral
-                              });
-                         }
+          if (!msg.inGuild() && msg.isRepliable()) {
+               msg.reply("Not supported yet.");
+          }
 
-                         response = shortenText(response, 1950);
+          const isCommand = msg.isCommand();
+          const isButton = msg.isButton();
+          const isSelectMenu = msg.isSelectMenu();
 
-                         if (racism.test(response) || slurs.test(response)) {
-                              Logger.log(
-                                   LogLevel.WARN,
-                                   `This message violates the Discord Terms of Service.`
-                              );
-                              return;
-                         }
-
-                         try {
-                              await msg.reply(
-                                   ephemeral
-                                        ? { content: response, ephemeral: true }
-                                        : response
-                              );
-                         } catch (error) {
-                              Logger.log(
-                                   LogLevel.ERROR,
-                                   `Error while sending message: ${error}`
-                              );
-                         }
-                    }
-               };
-
-               handler(msgHadnler);
+          const supportedInteraction = isCommand || isButton || isSelectMenu;
+          if (supportedInteraction) {
+               return handler(msg, client);
           }
      });
 };
