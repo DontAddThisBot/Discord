@@ -3,8 +3,12 @@ import { Interaction } from "discord.js";
 import { FeedbackManager } from "./FeedbackManager";
 
 import { errorEmbed } from "../embeds/error";
+import { CustomClient } from "../../main";
 
-export const handler = async (interaction: Interaction, client: any) => {
+export const handler = async (
+     interaction: Interaction,
+     client: CustomClient
+) => {
      if (interaction.isCommand()) {
           console.log(
                `New command: user: ${interaction.user.username}, guild: ${interaction.guild?.name}, command: ${interaction.commandName}`

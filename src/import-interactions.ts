@@ -11,14 +11,11 @@ import {
 import path from "path";
 import fs from "fs";
 import { type } from "../config.json";
+import { CustomClient } from "./main";
 
-const importInteractions = (client: any) => {
-     client.commands = new Collection();
+const importInteractions = (client: CustomClient) => {
      importCommands(client.commands);
-
-     client.buttons = new Collection();
      importButtonInteractions(client.buttons);
-
      // client.selectMenu = new Collection();
      // importSelectMenu(client.selectMenu);
 };
