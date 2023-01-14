@@ -6,12 +6,13 @@ import { FeedbackManager } from "../events/modules/FeedbackManager";
 // import editEmoteByUser from "../emotes/editEmoteByUser";
 // import getRawEmote from "../api/discord/getRawEmote";
 import fetch from "node-fetch";
-import { SharpEmote } from "../test/SharpEmote";
+import { SharpEmote } from "../utility/SharpEmote";
 import { interactionEmbed } from "../events/embeds/interaction";
 import sizeOf from "buffer-image-size";
 import prettyBytes from "pretty-bytes";
 import sharp from "sharp";
 import { CustomClient } from "../main";
+import getSubmitEmoteRow from "../builders/GetSubmitRow";
 
 const maxEmoteSize = 262144;
 const selectEmote = {
@@ -22,7 +23,7 @@ const selectEmote = {
           const taskId = interaction.customId;
 
           const taskDetails = client.tasks.getTask(taskId);
-          const { emoteReference, url, animated } = taskDetails;
+          const { emoteReference, url, animated, name } = taskDetails;
 
           await feedback.removeButtons();
           await feedback.gotRequest();
@@ -80,8 +81,19 @@ const selectEmote = {
                "attachment://preview.gif"
           );
 
+          const createSubmitButtons = client.tasks.addTask({
+               action: "postProcess",
+               emoteReference,
+               Buffered,
+               animated,
+               name
+          });
+
+          const GetSubmit = getSubmitEmoteRow(createSubmitButtons, name);
+
           await feedback.sendMessage({
                embeds: [Embed],
+               components: [GetSubmit],
                files: [{ attachment: Buffered, name: "preview.gif" }]
           });
 

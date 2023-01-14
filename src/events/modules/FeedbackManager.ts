@@ -19,6 +19,7 @@ import { infoEmbed } from "../embeds/info";
 import { errorEmbed } from "../embeds/error";
 import { interactionEmbed } from "../embeds/interaction";
 import warningEmbed from "../embeds/warning";
+import successfulEmbed from "../embeds/success";
 
 export class FeedbackManager {
      interaction:
@@ -150,5 +151,18 @@ export class FeedbackManager {
      ) {
           const embed = warningEmbed(message);
           await this.sendMessage({ embeds: [embed], components });
+     }
+
+     async success(title: string, description: string, image?: string) {
+          const embed = successfulEmbed(title, description, image);
+          await this.sendMessage({ embeds: [embed] });
+     }
+
+     async successedAddedEmote(emote: GuildEmoji) {
+          await this.success(
+               "Success!",
+               `Successfully added \`${emote.name}\` emote! ${emote} in \`${emote.guild.name}\``,
+               emote.url
+          );
      }
 }
