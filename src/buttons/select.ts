@@ -11,11 +11,12 @@ import { interactionEmbed } from "../events/embeds/interaction";
 import sizeOf from "buffer-image-size";
 import prettyBytes from "pretty-bytes";
 import sharp from "sharp";
+import { CustomClient } from "../main";
 
 const maxEmoteSize = 262144;
 const selectEmote = {
      data: { name: "selectEmote" },
-     async execute(interaction: any, client: any) {
+     async execute(interaction: ButtonInteraction, client: CustomClient) {
           const feedback = new FeedbackManager(interaction);
 
           const taskId = interaction.customId;

@@ -2,7 +2,8 @@ import {
      SlashCommandBuilder,
      ActionRowBuilder,
      ButtonBuilder,
-     ButtonStyle
+     ButtonStyle,
+     CommandInteraction
 } from "discord.js";
 // import { Collector } from "../Collector";
 import { GetChannelEmotes } from "../services/seventv";
@@ -13,6 +14,7 @@ import { returnEmbeds } from "../manager/EmbedBuilder";
 import { ButtonSelectBuilder } from "../manager/ButtonSelectBuilder";
 import renderEmotesSelect from "../test/RenderEmoteList";
 import getNavigatorRow from "../test/GetNavigatorRow";
+import { CustomClient } from "../main";
 
 const here = {
      data: new SlashCommandBuilder()
@@ -24,7 +26,7 @@ const here = {
                     .setDescription("Input Channel Name to get emotes from")
                     .setRequired(true)
           ),
-     async execute(interaction: any, client: any) {
+     async execute(interaction: CommandInteraction, client: CustomClient) {
           const feedback = new FeedbackManager(interaction);
           await feedback.gotRequest();
 
