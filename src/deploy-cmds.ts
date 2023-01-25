@@ -21,7 +21,6 @@ const commandFiles = fs
 
 for (const file of commandFiles) {
      const filePath = path.join(commandsPath, file);
-     console.log(filePath);
      const command = require(filePath);
      if (command.default) {
           const parsed = command.default.data.toJSON();

@@ -1,55 +1,81 @@
+import { CustomClient } from "../main";
 import { SlashCommandBuilder, CommandInteraction } from "discord.js";
-import { GetChannelEmotes } from "../services/seventv";
-import { getUsername } from "../services/twitch";
 import { FeedbackManager } from "../events/modules/FeedbackManager";
+import { SearchEmotes } from "../services/seventv";
 import { EmoteListManager } from "../manager/EmoteListManager";
 import renderEmotesSelect from "../builders/RenderEmoteList";
 import getNavigatorRow from "../builders/GetNavigatorRow";
-import { CustomClient } from "../main";
 
-const here = {
+interface EmoteObject {
+     name: string;
+     id: string;
+     tags: string[];
+     listed: boolean;
+     animated: boolean;
+     owner: {
+          id: string;
+          username: string;
+          display_name: string;
+     };
+     host: {
+          url: string;
+          files: {
+               [key: string]: string;
+          };
+     };
+}
+
+const search = {
      permissions: ["ManageEmojisAndStickers"],
      data: new SlashCommandBuilder()
-          .setName("add")
-          .setDescription("Add emotes from a channel")
+          .setName("search")
+          .setDescription("Search An 7TV Emote and add it!")
           .addStringOption((option) =>
                option
-                    .setName("name")
-                    .setDescription("Input Channel Name to get emotes from")
+                    .setName("emote")
+                    .setDescription("Emote To Search")
                     .setRequired(true)
           ),
      async execute(interaction: CommandInteraction, client: CustomClient) {
           const feedback = new FeedbackManager(interaction);
           await feedback.gotRequest();
 
-          const channelName = (
-               interaction.options.get("name")?.value as string
+          const emoteName = (
+               interaction.options.get("emote")?.value as string
           ).toLowerCase();
-          const channelID = await getUsername(channelName);
-          if (!channelID) {
-               return feedback.error(`${channelName} is not a valid channel!`);
+
+          const searchEmotes = await SearchEmotes(emoteName);
+          if (!searchEmotes.success) {
+               return feedback.error(searchEmotes.message);
           }
 
-          const getChannelEmotes = await GetChannelEmotes(channelID[0].id);
-          if (!getChannelEmotes) {
-               return feedback.error(`${channelName} never registered to 7TV!`);
-          }
-
-          if (!getChannelEmotes.emote_set.emotes) {
-               return feedback.error(
-                    `${channelName} doesn't have any emotes registered!`
-               );
-          }
+          const emoteObjectMapped = searchEmotes.data.map(
+               (emote: EmoteObject) => {
+                    emote.name = emote.name.slice(0, 32);
+                    return {
+                         name: emote.name,
+                         id: emote.id,
+                         data: {
+                              id: emote.id,
+                              name: emote.name,
+                              tags: emote.tags,
+                              listed: emote.listed,
+                              animated: emote.animated,
+                              owner: emote.owner,
+                              host: emote.host
+                         }
+                    };
+               }
+          ) as EmoteObject[];
 
           const storeId = EmoteListManager.storeEmotes(
-               channelName,
-               getChannelEmotes.emote_set.emotes
-          )!;
+               emoteName,
+               emoteObjectMapped
+          );
           const pageOfEmotes = EmoteListManager.getEmotesInPages(storeId, 1)!;
           const storeInfo = EmoteListManager.getStoredInfo(storeId)!;
 
           const emotesEmbedPreview = renderEmotesSelect(pageOfEmotes, client);
-
           const navigatorTask = client.tasks.addTask({
                action: "navigatePage",
                feedback: feedback,
@@ -74,4 +100,4 @@ const here = {
      }
 };
 
-export default here;
+export default search;

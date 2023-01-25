@@ -11,7 +11,6 @@ const cancelAction = {
           const [taskId, type] = interaction.customId.split(":");
           const getTaskInfo = client.tasks.getTask(taskId);
           if (type === "submit") {
-               console.log(getTaskInfo);
                try {
                     await addEmoteToGuild(
                          getTaskInfo,

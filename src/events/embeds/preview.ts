@@ -18,7 +18,7 @@ const emotePreviewEmbed = (options: {
      };
      Fields.push(authorField);
 
-     if (tags) {
+     if (tags && tags.length > 0) {
           const joinTagsEveryTwoLength = (arr: string[]) => {
                const newArr = [];
                for (let i = 0; i < arr.length; i += 2) {

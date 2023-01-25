@@ -8,6 +8,8 @@ interface Query {
           id?: string;
           emote_id?: string;
           list?: string[];
+          limit?: number;
+          ignore_tags?: string[];
      };
 }
 
@@ -274,5 +276,73 @@ export const GetChannelEmotes = async (id: string): Promise<any> => {
           return result;
      } catch (err) {
           throw new Error("Failed to fetch channel emotes.");
+     }
+};
+
+export const SearchEmotes = async (searchEmote: string): Promise<any> => {
+     if (!searchEmote) return;
+     const query = {
+          operationName: "SearchEmotes",
+          query: `query SearchEmotes($query: String!, $limit: Int, $filter: EmoteSearchFilter) {
+               emotes(query: $query, limit: $limit, filter: $filter) {
+                    count
+                    items {
+                         id
+                         name
+                         animated
+                         tags
+                         listed
+                         owner {
+                              id
+                              username
+                              display_name
+                              avatar_url
+                         }
+                         host {
+                              url
+                              files {
+                                   name
+                                   format
+                                   width
+                                   height
+                              }
+                         }
+                    }
+               }
+          }`,
+          variables: {
+               query: searchEmote,
+               limit: 20000,
+               filter: {
+                    ignore_tags: false
+               }
+          }
+     };
+
+     try {
+          const response = await makeRequest(query);
+          if (response?.errors) {
+               return {
+                    success: false,
+                    data: null,
+                    message: response.errors[0].message
+               };
+          }
+
+          if (response?.data?.emotes?.count === 0) {
+               return {
+                    success: false,
+                    data: null,
+                    message: "No emotes found."
+               };
+          }
+
+          return {
+               success: true,
+               data: response.data.emotes.items,
+               count: response.data.emotes.count
+          };
+     } catch (err) {
+          throw new Error(String(err));
      }
 };

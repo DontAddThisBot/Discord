@@ -16,6 +16,20 @@ export const handler = async (
 
           const command = client.commands.get(interaction.commandName) as any;
           if (!command) return;
+          if (command?.permissions) {
+               const userPermissions = interaction.memberPermissions;
+               if (!userPermissions?.has(command.permissions)) {
+                    const error = errorEmbed(
+                         `You are not allowed to execute this command! \nYou need the following permissions: \`${command.permissions}\``
+                    );
+                    interaction.reply({
+                         embeds: [error],
+                         ephemeral: true,
+                         files: []
+                    });
+                    return;
+               }
+          }
 
           try {
                await command.execute(interaction, client);
@@ -82,41 +96,4 @@ export const handler = async (
                }
           }
      }
-     // if (interaction) {
-     //      const command = client.commands.get(interaction.commandName) as any;
-     //      if (!command) return;
-     //      console.log(
-     //           `New interaction: user: ${interaction.user.username}, guild: ${interaction.guild?.name}, command: ${interaction.commandName}`
-     //      );
-     //      console.log(interaction);
-     //      if (command) {
-     //           try {
-     //                if (command?.permission) {
-     //                     if (
-     //                          !interaction.memberPermissions.has(
-     //                               command.permission
-     //                          )
-     //                     ) {
-     //                          return await interaction.reply({
-     //                               content: `You don't have the permission to use this command! Missing permission: \`${command.permission}\``,
-     //                               ephemeral: true
-     //                          });
-     //                     }
-     //                }
-     //                await command.execute(interaction, client);
-     //                // if (response) {
-     //                //      await interaction.reply(response);
-     //                // }
-     //           } catch (error) {
-     //                Logger.log(
-     //                     LogLevel.ERROR,
-     //                     `Error while executing command: ${error}`
-     //                );
-     //                await interaction.reply({
-     //                     content: `An error occurred while executing this command! \`${error}\``,
-     //                     ephemeral: true
-     //                });
-     //           }
-     //      }
-     // }
 };

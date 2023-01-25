@@ -89,18 +89,15 @@ export class FeedbackManager {
           // this.isReplied = this.interaction.replied;
 
           if (this.isReplied) {
-               console.log("editReply");
                await this.interaction.editReply(messagePayload);
           } else {
                if (!(this.interaction instanceof CommandInteraction)) {
-                    console.log("no interaction");
                     await this.interaction.update({
                          embeds,
                          components,
                          files
                     });
                } else {
-                    console.log("reply");
                     await this.interaction.reply(messagePayload);
                }
           }
